@@ -1,12 +1,7 @@
 package com.example.musicapp.ui.home
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,15 +17,15 @@ import com.example.musicapp.model.homeTabs.HomeTabs
 import com.example.musicapp.R
 import com.example.musicapp.ui.home.adapters.vp.VpAdapterTabs
 import com.example.musicapp.databinding.HomeFragmentBinding
-import com.example.musicapp.ui.MainActivityViewModel
 import com.example.musicapp.ui.home.adapters.rv.HomeMusicAdapter
+import com.example.musicapp.ui.player.PlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment() : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels()
-    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
+    private val playerViewModel: PlayerViewModel by activityViewModels()
     private lateinit var binder: HomeFragmentBinding
 
     private lateinit var vpTabsAdapterTabs: VpAdapterTabs
@@ -98,7 +93,7 @@ class HomeFragment() : Fragment() {
 
         rvMusicAdapter = HomeMusicAdapter()
         rvMusicAdapter.setListener {
-            mainActivityViewModel.playMediaId(it)
+            playerViewModel.playMediaId(it)
         }
         rvMusicAdapter.registerAdapterDataObserver(listObserver)
         binder.homeSongList.apply {

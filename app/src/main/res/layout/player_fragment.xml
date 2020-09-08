@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.musicapp.ui.player.PlayerViewModel" />
+    </data>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/activity_main_xml_main_root_scene"
+        tools:context=".ui.player.PlayerFragment">
+
+        <View
+            android:id="@+id/player_black_head"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@android:color/black"/>
+
+        <View
+            android:id="@+id/player_rounded_corners"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/rounded_shape"/>
+
+        <com.example.musicapp.ui.views.CircleImageView
+            android:id="@+id/player_album_label"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            app:loadImg="@{viewModel.mediaMetadata.albumArtUri.path}"
+            app:innerCircleRadius="0dp"
+            android:src="@drawable/ic_launcher_background" />
+
+
+        <TextView
+            android:id="@+id/player_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/days_one_regular"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:text="Mouth"
+            android:text="@{viewModel.mediaMetadata.title}" />
+
+        <TextView
+            android:id="@+id/player_author_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/white"
+            android:text="@{viewModel.mediaMetadata.subtitle}"
+            tools:text="Calvin Harris" />
+
+        <TextView
+            android:id="@+id/player_song_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:text="@{viewModel.mediaMetadata.durationStr}"
+            tools:text="3:16" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            app:timeFormat="@{viewModel.mediaPosition}"
+            tools:text="0:16" />
+
+        <RelativeLayout
+            android:id="@+id/player_top_btn_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp">
+
+            <ImageButton
+                android:id="@+id/player_top_pause_play_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/circle"
+                android:backgroundTint="@android:color/black"
+                app:playPauseBtnRes="@{viewModel.mediaButtonRes}"
+                android:onClick="@{(v) -> viewModel.playMediaId(viewModel.mediaMetadata.id)}"
+                android:tint="@android:color/white" />
+
+            <ProgressBar
+                android:id="@+id/player_top_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:rotation="-90"
+                android:secondaryProgress="@{viewModel.mediaMetadata.durationLong}"
+                android:max="@{viewModel.mediaMetadata.durationLong}"
+                android:progress="@{viewModel.mediaPosition.longValue()}"
+                tools:max="100"
+                tools:progress="20" />
+        </RelativeLayout>
+
+        <me.tankery.lib.circularseekbar.CircularSeekBar
+            android:id="@+id/player_seek_bar"
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            app:songDurationMax="@{viewModel.mediaMetadata.durationLong}"
+            app:cs_circle_color="@android:color/darker_gray"
+            app:cs_circle_progress_color="@color/colorPrimary"
+            app:cs_circle_stroke_width="3dp"
+            app:cs_disable_progress_glow="false"
+            app:cs_pointer_color="@color/colorPrimary"
+            app:cs_pointer_stroke_width="20dp"
+            android:visibility="gone"
+            tools:cs_progress="23" />
+
+        <ImageButton
+            android:id="@+id/player_play_pause_btn"
+            android:visibility="gone"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/circle"
+            android:padding="15dp"
+            android:onClick="@{(v) -> viewModel.playMediaId(viewModel.mediaMetadata.id)}"
+            android:scaleType="centerCrop"
+            app:playPauseBtnRes="@{viewModel.mediaButtonRes}"
+            android:tint="@android:color/white"/>
+
+        <ImageButton
+            android:id="@+id/player_skip_next_btn"
+            android:visibility="gone"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"
+            android:onClick="@{(v) -> viewModel.skipNext()}"
+            android:src="@drawable/ic_baseline_skip_next_24"
+            android:tint="@android:color/black"/>
+
+        <ImageButton
+            android:id="@+id/player_skip_prev_btn"
+            android:visibility="gone"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerCrop"
+            android:onClick="@{(v) -> viewModel.skipPrev()}"
+            android:src="@drawable/ic_baseline_skip_previous_24"
+            android:tint="@android:color/black"/>
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>

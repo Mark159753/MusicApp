@@ -4,16 +4,14 @@ package com.example.musicapp.ui.home
 import android.content.Context
 import android.net.Uri
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.example.musicapp.model.song.Song
 import com.example.musicapp.service.MUSIC_BROWSABLE_ROOT
 import com.example.musicapp.service.common.MusicServiceConnection
-import com.example.musicapp.service.extensions.id
-import com.example.musicapp.service.extensions.isPlayEnabled
-import com.example.musicapp.service.extensions.isPlaying
-import com.example.musicapp.service.extensions.isPrepared
+import com.example.musicapp.service.extensions.*
 
 class HomeViewModel @ViewModelInject constructor(
     musicServiceConnection: MusicServiceConnection

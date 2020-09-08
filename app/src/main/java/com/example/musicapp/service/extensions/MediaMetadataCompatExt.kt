@@ -88,8 +88,8 @@ inline val MediaMetadataCompat.displayDescription: String?
 inline val MediaMetadataCompat.displayIcon: Bitmap
     get() = getBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON)
 
-inline val MediaMetadataCompat.displayIconUri: Uri
-    get() = this.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI).toUri()
+inline val MediaMetadataCompat.displayIconUri: Uri?
+    get() = this.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI)?.let { it.toUri() }
 
 inline val MediaMetadataCompat.mediaUri: Uri
     get() = this.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI).toUri()

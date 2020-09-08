@@ -4,31 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <Transition
-        android:id="@+id/swipe_transition"
-        motion:constraintSetEnd="@+id/end"
-        motion:constraintSetStart="@id/start">
-        <OnSwipe
-            motion:dragDirection="dragUp"
-            motion:touchAnchorSide="top"
-            motion:touchRegionId="@id/player_black_head"/>
+        motion:constraintSetEnd="@id/extended_state"
+        motion:constraintSetStart="@id/collapsed_state">
+        <KeyFrameSet >
+            <KeyAttribute
+                motion:motionTarget="@+id/player_top_btn_container"
+                motion:framePosition="4"
+                android:alpha="1" />
+            <KeyAttribute
+                motion:motionTarget="@+id/player_top_btn_container"
+                android:alpha="0"
+                motion:framePosition="14" />
+        </KeyFrameSet>
     </Transition>
 
     <ConstraintSet
-        android:id="@+id/start">
+        android:id="@+id/collapsed_state">
         <Constraint android:id="@id/player_black_head">
             <Layout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="100dp"
                 android:background="@android:color/black"
-                motion:layout_constraintBottom_toBottomOf="parent"/>
+                motion:layout_constraintTop_toTopOf="parent"/>
         </Constraint>
 
         <Constraint android:id="@id/player_rounded_corners">
             <Layout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:background="@drawable/rounded_shape"
                 android:layout_marginTop="@dimen/bottom_player_height"
+                motion:layout_constraintBottom_toBottomOf="parent"
                 motion:layout_constraintTop_toTopOf="@id/player_black_head"/>
             <PropertySet android:visibility="visible"/>
         </Constraint>
@@ -39,7 +45,7 @@
                 android:layout_height="45dp"
                 android:layout_marginLeft="20dp"
                 motion:layout_constraintLeft_toLeftOf="parent"
-                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintBottom_toTopOf="@id/player_rounded_corners"
                 motion:layout_constraintTop_toTopOf="@id/player_black_head"
                 android:src="@drawable/ic_launcher_background"/>
             <CustomAttribute
@@ -69,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginBottom="8dp"
-                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintBottom_toTopOf="@id/player_rounded_corners"
                 motion:layout_constraintStart_toEndOf="@+id/player_album_label"
                 motion:layout_constraintTop_toBottomOf="@+id/player_song_name"
                 motion:layout_constraintVertical_bias="0.166"
@@ -87,7 +93,7 @@
                 android:textColor="@android:color/white"
                 motion:layout_constraintTop_toTopOf="@id/player_black_head"
                 motion:layout_constraintRight_toLeftOf="@id/player_top_btn_container"
-                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintBottom_toTopOf="@id/player_rounded_corners"
                 tools:text="3:16"/>
         </Constraint>
 
@@ -98,7 +104,7 @@
                 android:layout_marginRight="8dp"
                 motion:layout_constraintTop_toTopOf="@id/player_black_head"
                 motion:layout_constraintRight_toLeftOf="@id/player_song_duration"
-                motion:layout_constraintBottom_toBottomOf="parent"/>
+                motion:layout_constraintBottom_toTopOf="@id/player_rounded_corners"/>
         </Constraint>
 
         <Constraint android:id="@id/player_top_btn_container">
@@ -108,7 +114,7 @@
                 android:layout_marginRight="20dp"
                 motion:layout_constraintTop_toTopOf="@id/player_black_head"
                 motion:layout_constraintRight_toRightOf="parent"
-                motion:layout_constraintBottom_toBottomOf="parent"/>
+                motion:layout_constraintBottom_toTopOf="@id/player_rounded_corners"/>
         </Constraint>
 
         <Constraint android:id="@id/player_seek_bar">
@@ -163,7 +169,7 @@
 
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
+    <ConstraintSet android:id="@+id/extended_state">
         <Constraint android:id="@id/player_black_head">
             <Layout
                 android:layout_width="match_parent"
@@ -175,8 +181,9 @@
         <Constraint android:id="@id/player_rounded_corners">
             <Layout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:layout_marginTop="@dimen/bottom_player_height"
+                motion:layout_constraintBottom_toBottomOf="parent"
                 motion:layout_constraintTop_toTopOf="parent"/>
             <PropertySet android:visibility="visible"/>
         </Constraint>

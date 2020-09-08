@@ -1,18 +1,24 @@
 package com.example.musicapp.ui
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.viewModels
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -22,6 +28,7 @@ import androidx.navigation.Navigation
 import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityMainBinding
 import com.example.musicapp.ui.home.HomeViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
@@ -33,10 +40,10 @@ private const val PERMISSION_CODE = 5
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavController
     private lateinit var binder:ActivityMainBinding
+    private lateinit var bottomPlayer:BottomSheetBehavior<FragmentContainerView>
 
-    private var seekBarIsTracking = false
+    private var isBottomPlayerShow = false
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -58,44 +65,91 @@ class MainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
 
-        navController = Navigation.findNavController(this,
-            R.id.nav_host_fragment
-        )
+        initBottomPlayer()
 
-        handleSongProgress()
+        viewModel.playerPlaybackState.observe(this, Observer {
+            animateNavHostFragmentMargin(it)
+        })
+    }
 
-        //TODO Remove this
-        binder.playerTopBtnContainer.setOnClickListener {
-            Log.e("CLICK", "HU_RA")
+    private fun animateNavHostFragmentMargin(state:Int){
+        when(state){
+            PlaybackStateCompat.STATE_NONE,
+            PlaybackStateCompat.STATE_STOPPED-> {
+                navFragmentRemoveMarginBottom()
+            }
+            else -> {
+                navFragmentAddMarginBottom()
+            }
+        }
+    }
+
+    private fun navFragmentAddMarginBottom(){
+        if (!isBottomPlayerShow){
+            bottomPlayer.apply {
+                isHideable = false
+                state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+            animateValue(0, resources.getDimensionPixelSize(R.dimen.bottom_player_height)){
+                navFragmentMarginBottom(it)
+            }
+            isBottomPlayerShow = true
+        }
+    }
+
+    private fun navFragmentRemoveMarginBottom(){
+        if (isBottomPlayerShow){
+            bottomPlayer.apply {
+                isHideable = true
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            animateValue(resources.getDimensionPixelSize(R.dimen.bottom_player_height), 0){
+                navFragmentMarginBottom(it)
+            }
+            isBottomPlayerShow = false
+        }
+    }
+
+    private fun animateValue(start:Int, end:Int, duration:Long = 150, animFun: (Int) -> Unit){
+        ValueAnimator.ofInt(start, end).apply {
+            this.duration = duration
+            interpolator = FastOutSlowInInterpolator()
+            addUpdateListener {
+                animFun((it.animatedValue as Int))
+            }
+            start()
+        }
+    }
+
+    private fun navFragmentMarginBottom(margin:Int){
+        val param = binder.navHostFragment.layoutParams as ViewGroup.MarginLayoutParams
+        param.bottomMargin = margin
+        binder.navHostFragment.layoutParams = param
+    }
+
+    private fun initBottomPlayer(){
+        bottomPlayer = BottomSheetBehavior.from(bottom_player)
+        bottomPlayer.apply {
+            isHideable = true
+            state = BottomSheetBehavior.STATE_HIDDEN
+            addBottomSheetCallback(object :BottomSheetBehavior.BottomSheetCallback(){
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED){
+                        binder.navHostFragment.visibility = View.GONE
+                    }else{
+                        binder.navHostFragment.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    viewModel.setBottomPlayerProgress(slideOffset)
+                }
+            })
         }
     }
 
 
 
-    private fun handleSongProgress(){
-        viewModel.mediaPosition.observe(this, Observer {
-            if (!seekBarIsTracking){
-                binder.playerSeekBar.progress = it.toFloat()
-            }
-        })
-
-        binder.playerSeekBar.setOnSeekBarChangeListener(object :CircularSeekBar.OnCircularSeekBarChangeListener{
-            override fun onProgressChanged(
-                circularSeekBar: CircularSeekBar?,
-                progress: Float,
-                fromUser: Boolean
-            ) {}
-
-            override fun onStartTrackingTouch(seekBar: CircularSeekBar?) {
-                seekBarIsTracking = true
-            }
-
-            override fun onStopTrackingTouch(seekBar: CircularSeekBar?) {
-                viewModel.seekTo(seekBar!!.progress.toLong())
-                seekBarIsTracking = false
-            }
-        })
-    }
 
     fun requestPermission():Boolean{
         return if (ContextCompat.checkSelfPermission(this,

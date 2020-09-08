@@ -46,7 +46,7 @@ class MusicPlaybackPreparer(
             item.id == mediaId
         }
         if (itemToPlay == null) {
-            Log.w("MusicPlaybackPreparer", "Content not found: MediaID=$mediaId")
+            Log.e("MusicPlaybackPreparer", "Content not found: MediaID=$mediaId")
 
             // TODO: Notify caller of the error.{
         } else{

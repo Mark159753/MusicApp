@@ -84,7 +84,7 @@ class SongRepositoryImpl @Inject constructor(
         artist = song.displayName
         album = song.album
         mediaUri = song.dataPath
-        albumArtUri = song.albumArtPath
+
         flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
 
         // To make things easier for *displaying* these, set the display properties as well.
@@ -92,7 +92,7 @@ class SongRepositoryImpl @Inject constructor(
         displaySubtitle = song.displayName
         displayDescription = song.album
         displayIconUri = song.albumArtPath
-
+        albumArtUri = song.albumArtPath
         return this
     }
 

@@ -5,7 +5,9 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.example.musicapp.R
 import com.example.musicapp.ui.MainActivityViewModel
+import com.example.musicapp.ui.player.PlayerViewModel
 import com.example.musicapp.ui.views.CircleImageView
 import com.squareup.picasso.Picasso
 import me.tankery.lib.circularseekbar.CircularSeekBar
@@ -22,17 +24,18 @@ fun loadImg(view:ImageView, res:Int){
 
 @BindingAdapter("loadImg")
 fun loadImg(view:CircleImageView, path:String?){
-    path?.let {
-        Log.e("PATH_BINDING", it)
-        Picasso.get()
-            .load(File(it))
-            .into(view)
+    if (path != null){
+            Picasso.get()
+                .load(File(path))
+                .into(view)
+    }else{
+        view.setImageResource(R.drawable.ic_launcher_background)
     }
 }
 
 @BindingAdapter("timeFormat")
 fun timeFormat(view:TextView, time:Long){
-    view.text = MainActivityViewModel.NowPlayingMetadata.timestampToMSS(view.context, time)
+    view.text = PlayerViewModel.NowPlayingMetadata.timestampToMSS(view.context, time)
 }
 
 @BindingAdapter("songDurationMax")

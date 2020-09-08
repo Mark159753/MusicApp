@@ -117,16 +117,6 @@ class MusicService: MediaBrowserServiceCompat() {
             connector.setQueueNavigator(MusicQueueNavigator(mediaSession))
         }
 
-        mediaSessionConnector.registerCustomCommandReceiver { player, controlDispatcher, command, extras, cb ->
-            when(command){
-                SEEK_TO -> {
-                    val position = extras!!.getLong(SEEK_TO)
-                    player.seekTo(position)
-                    true
-                }
-                else -> false
-            }
-        }
         registerBroadcastUpdate()
     }
 
@@ -166,7 +156,7 @@ class MusicService: MediaBrowserServiceCompat() {
         // Need to rewrite
         Log.e("LOAD_CHILDREN_ROOT ->", parentId)
         if (parentId == MUSIC_BROWSABLE_ROOT) {
-            result.detach()
+            result.detach() // for waiting a result from background thread
             serviceScope.launch {
                 repository.loadAllMusic().collect { list ->
                     repository.setCurrentPlaylist(list)
@@ -243,8 +233,6 @@ class MusicService: MediaBrowserServiceCompat() {
 }
 
 private const val MUSIC_USER_AGENT = "uamp.next"
-
-const val SEEK_TO = "com.example.musicapp.service.SEEK_TO"
 
 const val MUSIC_BROWSABLE_ROOT = "/"
 
