@@ -11,34 +11,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.viewModels
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentFactory
-import androidx.fragment.app.viewModels
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.example.musicapp.R
 import com.example.musicapp.databinding.ActivityMainBinding
-import com.example.musicapp.ui.home.HomeViewModel
+import com.example.musicapp.ui.base.LightStatusBarController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.launch
-import me.tankery.lib.circularseekbar.CircularSeekBar
 import javax.inject.Inject
 
 private const val PERMISSION_CODE = 5
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LightStatusBarController {
 
     private lateinit var binder:ActivityMainBinding
     private lateinit var bottomPlayer:BottomSheetBehavior<FragmentContainerView>
@@ -70,6 +61,17 @@ class MainActivity : AppCompatActivity() {
         viewModel.playerPlaybackState.observe(this, Observer {
             animateNavHostFragmentMargin(it)
         })
+    }
+
+    override fun setIsLightStatusBar(light:Boolean){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val view = window.decorView
+            if (light){
+                view.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            }else{
+                view.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            }
+        }
     }
 
     private fun animateNavHostFragmentMargin(state:Int){
@@ -136,8 +138,10 @@ class MainActivity : AppCompatActivity() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_EXPANDED){
                         binder.navHostFragment.visibility = View.GONE
+                        setIsLightStatusBar(false)
                     }else{
                         binder.navHostFragment.visibility = View.VISIBLE
+                        setIsLightStatusBar(true)
                     }
                 }
 

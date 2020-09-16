@@ -10,8 +10,13 @@
         <item name="android:windowTranslucentStatus">true</item>
 
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.CircleShape" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 
     <declare-styleable name="CircleImageView">
         <attr name="innerCircleRadius" format="dimension"/>

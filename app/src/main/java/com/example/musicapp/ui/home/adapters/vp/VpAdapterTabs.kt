@@ -45,6 +45,8 @@ class VpAdapterTabs
         tabContainer.setBackgroundColor(dataList[position].tabColor)
         title.text = dataList[position].tabName
 
+        v.transitionName = "${context.getString(R.string.transition_tab_name)}${dataList[position].id}"
+
         v.setOnClickListener {
             listener?.onItemSelected(position, it)
         }

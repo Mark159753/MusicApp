@@ -9,5 +9,29 @@
         android:id="@+id/homeFragment"
         android:name="com.example.musicapp.ui.home.HomeFragment"
         android:label="home_fragment"
-        tools:layout="@layout/home_fragment" />
+        tools:layout="@layout/home_fragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_songListFragment"
+            app:destination="@id/songListFragment">
+            <argument
+                android:name="color"
+                android:defaultValue="0"
+                app:argType="integer" />
+            <argument
+                android:name="transition_name"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/songListFragment"
+        android:name="com.example.musicapp.ui.songList.SongListFragment"
+        android:label="SongListFragment" >
+        <argument
+            android:name="color"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <argument
+            android:name="transition_name"
+            app:argType="string" />
+    </fragment>
 </navigation>

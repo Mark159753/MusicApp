@@ -13,6 +13,14 @@
         android:layout_height="match_parent"
         android:padding="16dp"
         android:background="@color/colorPrimary">
+        <ImageView
+            android:id="@+id/home_tab_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@id/home_tab_title"
+            android:src="@drawable/ic_music_note"
+            app:tint="@android:color/white" />
         <TextView
             android:id="@+id/home_tab_title"
             android:layout_width="wrap_content"
