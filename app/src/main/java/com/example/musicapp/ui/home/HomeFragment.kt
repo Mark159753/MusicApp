@@ -37,7 +37,6 @@ class HomeFragment() : BaseFragment(), ItemSelectedListener {
 
     private val listOfTabs by lazy { TabsDelegate.createTabsList() }
 
-    //TODO Remove this from here
     private val listObserver = object :RecyclerView.AdapterDataObserver(){
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
             if (positionStart == 0){

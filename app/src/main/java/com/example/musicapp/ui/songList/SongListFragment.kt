@@ -1,38 +1,50 @@
 package com.example.musicapp.ui.songList
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.ShapeDrawable
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.ColorUtils
-import androidx.core.view.doOnLayout
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
-import androidx.transition.TransitionInflater
 import androidx.transition.TransitionListenerAdapter
 import com.example.musicapp.R
 import com.example.musicapp.databinding.SongListFragmentBinding
 import com.example.musicapp.ui.base.BaseFragment
+import com.example.musicapp.ui.player.PlayerViewModel
+import com.example.musicapp.ui.songList.adapters.SongListAdapter
 import com.example.musicapp.ui.songList.transition.CircleTransition
 import com.example.musicapp.ui.songList.transition.SlideUpAnimation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SongListFragment : BaseFragment() {
 
-    private val viewModel:SongListFrafmentViewModel by viewModels()
+    private val viewModel:SongListFragmentViewModel by viewModels()
+    private val playerViewModel: PlayerViewModel by activityViewModels()
 
     private val slideUpAnimation by lazy { SlideUpAnimation(requireContext()) }
 
     private val args:SongListFragmentArgs by navArgs()
+
+    private lateinit var musicAdapter:SongListAdapter
+    private val listObserver = object : RecyclerView.AdapterDataObserver(){
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            if (positionStart == 0){
+                binder.songListRc.scrollToPosition(0)
+            }
+        }
+    }
 
     private lateinit var binder:SongListFragmentBinding
 
@@ -84,9 +96,33 @@ class SongListFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         backStack()
+        initMusicList()
+        observeSongList()
 
         //TODO Change this line below
         lightStatusBarController.setIsLightStatusBar(false)
+    }
+
+
+    private fun initMusicList(){
+        musicAdapter = SongListAdapter().also {adapter ->
+            adapter.setListener {
+                playerViewModel.playMediaId(it)
+            }
+            adapter.registerAdapterDataObserver(listObserver)
+        }
+        binder.songListRc.apply {
+            adapter = musicAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+        }
+    }
+
+    private fun observeSongList(){
+        viewModel.listOfSongs.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+            musicAdapter.submitList(it)
+        })
     }
 
     private fun backStack(){
