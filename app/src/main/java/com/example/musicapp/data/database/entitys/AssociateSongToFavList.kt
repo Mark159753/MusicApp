@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import com.example.musicapp.model.song.Song
 
-@Entity( primaryKeys = ["songId", "songId"],
+@Entity( primaryKeys = ["songId", "categoryFavListId"],
     foreignKeys = [
         ForeignKey(
             entity = Song::class,

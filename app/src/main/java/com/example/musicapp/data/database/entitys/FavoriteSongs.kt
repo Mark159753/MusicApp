@@ -11,7 +11,8 @@ data class FavoriteSongs(
     @Relation(
         parentColumn = "id",
         entityColumn = "categoryFavListId",
-        associateBy = Junction(AssociateSongToFavList::class)
+        associateBy = Junction(AssociateSongToFavList::class),
+        entity = AssociateSongToFavList::class
     )
     val songs:List<Song>
 )

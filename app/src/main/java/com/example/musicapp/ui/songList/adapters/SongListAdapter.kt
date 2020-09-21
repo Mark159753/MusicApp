@@ -19,14 +19,14 @@ import java.io.File
 class SongListAdapter: ListAdapter<Song, SongListAdapter.SongItemHolder>(COMPARATOR) {
 
     private var listener: ((String) -> Unit)? = null
-    private var popupMenuClickListener:PopupMenu.OnMenuItemClickListener? = null
+    private var moreBtnListener: ((View, Long) -> Unit)? = null
 
     fun setListener(listener: (parentId:String)-> Unit){
         this.listener = listener
     }
 
-    fun setPopupMenuClickListener(listener:PopupMenu.OnMenuItemClickListener){
-        popupMenuClickListener = listener
+    fun setMoreBtnListener(listener:(View, Long) -> Unit){
+        moreBtnListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongItemHolder {
@@ -51,11 +51,8 @@ class SongListAdapter: ListAdapter<Song, SongListAdapter.SongItemHolder>(COMPARA
                     .into(img)
             }
 
-            more_btn.setOnClickListener {
-                val popupMenu = PopupMenu(view.context, it, Gravity.END)
-                popupMenu.inflate(R.menu.song_item_popup_menu)
-                popupMenu.setOnMenuItemClickListener(popupMenuClickListener)
-                popupMenu.show()
+            more_btn.setOnClickListener { view ->
+                moreBtnListener?.let { it(view, item!!.id) }
             }
 
             view.setOnClickListener {

@@ -3,6 +3,7 @@ package com.example.musicapp.data.database
 import androidx.room.*
 import com.example.musicapp.data.database.entitys.AssociateSongToFavList
 import com.example.musicapp.data.database.entitys.FavoriteCategory
+import com.example.musicapp.data.database.entitys.FavoriteSongs
 import com.example.musicapp.model.song.Song
 
 @Dao

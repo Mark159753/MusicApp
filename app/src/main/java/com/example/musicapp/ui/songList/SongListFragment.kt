@@ -4,10 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.graphics.ColorUtils
@@ -117,15 +114,20 @@ class SongListFragment : BaseFragment() {
             adapter.setListener {
                 playerViewModel.playMediaId(it)
             }
-            adapter.setPopupMenuClickListener(PopupMenu.OnMenuItemClickListener {menuItem ->
-                when(menuItem.itemId){
-                    R.id.add_to_fav_btn -> {
-                        Toast.makeText(requireContext(), "Item Added to Favorite", Toast.LENGTH_SHORT).show()
-                        true
+            adapter.setMoreBtnListener { view, id ->
+                val popupMenu = PopupMenu(view.context, view, Gravity.END)
+                popupMenu.inflate(R.menu.song_item_popup_menu)
+                popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener {menuItem ->
+                    when(menuItem.itemId){
+                        R.id.add_to_fav_btn -> {
+                            Toast.makeText(requireContext(), "Item Added to Favorite $id", Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                        else -> false
                     }
-                    else -> false
-                }
-            })
+                })
+                popupMenu.show()
+            }
             adapter.registerAdapterDataObserver(listObserver)
         }
         binder.songListRc.apply {
