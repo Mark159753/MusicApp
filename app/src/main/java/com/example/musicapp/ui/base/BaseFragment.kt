@@ -14,4 +14,6 @@ abstract class BaseFragment:Fragment() {
             throw IllegalStateException("Wrong Context Or bad Activity")
         super.onAttach(context)
     }
+
+
 }

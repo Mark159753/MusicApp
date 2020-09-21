@@ -1,9 +1,12 @@
 package com.example.musicapp.ui.songList.adapters
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,9 +19,14 @@ import java.io.File
 class SongListAdapter: ListAdapter<Song, SongListAdapter.SongItemHolder>(COMPARATOR) {
 
     private var listener: ((String) -> Unit)? = null
+    private var popupMenuClickListener:PopupMenu.OnMenuItemClickListener? = null
 
     fun setListener(listener: (parentId:String)-> Unit){
         this.listener = listener
+    }
+
+    fun setPopupMenuClickListener(listener:PopupMenu.OnMenuItemClickListener){
+        popupMenuClickListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongItemHolder {
@@ -33,6 +41,7 @@ class SongListAdapter: ListAdapter<Song, SongListAdapter.SongItemHolder>(COMPARA
     inner class SongItemHolder(val view:View):RecyclerView.ViewHolder(view){
         private val title = view.findViewById<TextView>(R.id.song_item_name)
         private val img = view.findViewById<ShapeableImageView>(R.id.song_item_lable)
+        private val more_btn = view.findViewById<AppCompatImageButton>(R.id.song_item_more_btn)
 
         fun bind(item:Song?){
             title.text = item?.title
@@ -41,6 +50,14 @@ class SongListAdapter: ListAdapter<Song, SongListAdapter.SongItemHolder>(COMPARA
                     .load(File(it))
                     .into(img)
             }
+
+            more_btn.setOnClickListener {
+                val popupMenu = PopupMenu(view.context, it, Gravity.END)
+                popupMenu.inflate(R.menu.song_item_popup_menu)
+                popupMenu.setOnMenuItemClickListener(popupMenuClickListener)
+                popupMenu.show()
+            }
+
             view.setOnClickListener {
                 listener?.invoke(item!!.id.toString())
             }

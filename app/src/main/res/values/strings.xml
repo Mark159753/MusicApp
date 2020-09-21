@@ -12,4 +12,6 @@
 
     <string name="transition_extra_properties">transition_id</string>
     <string name="transition_tab_name">vp_tran_name</string>
+    <string name="add_to_favorite">Add to Favorite</string>
+    <string name="permission_message">You don\'t have Permission</string>
 </resources>

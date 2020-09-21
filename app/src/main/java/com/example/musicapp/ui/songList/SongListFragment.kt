@@ -5,8 +5,11 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -20,6 +23,7 @@ import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import com.example.musicapp.R
 import com.example.musicapp.databinding.SongListFragmentBinding
+import com.example.musicapp.ui.MainActivity
 import com.example.musicapp.ui.base.BaseFragment
 import com.example.musicapp.ui.player.PlayerViewModel
 import com.example.musicapp.ui.songList.adapters.SongListAdapter
@@ -96,6 +100,10 @@ class SongListFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         backStack()
+        (activity as MainActivity).requestPermissionIfNeed {
+            if (it) viewModel.subscribeMusicService()
+            else Toast.makeText(requireContext(), getString(R.string.permission_message), Toast.LENGTH_SHORT).show()
+        }
         initMusicList()
         observeSongList()
 
@@ -109,6 +117,15 @@ class SongListFragment : BaseFragment() {
             adapter.setListener {
                 playerViewModel.playMediaId(it)
             }
+            adapter.setPopupMenuClickListener(PopupMenu.OnMenuItemClickListener {menuItem ->
+                when(menuItem.itemId){
+                    R.id.add_to_fav_btn -> {
+                        Toast.makeText(requireContext(), "Item Added to Favorite", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    else -> false
+                }
+            })
             adapter.registerAdapterDataObserver(listObserver)
         }
         binder.songListRc.apply {

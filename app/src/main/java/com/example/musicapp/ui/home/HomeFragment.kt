@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -17,6 +18,7 @@ import com.example.musicapp.ui.home.adapters.vp.CarouselEffectTransformer
 import com.example.musicapp.R
 import com.example.musicapp.ui.home.adapters.vp.VpAdapterTabs
 import com.example.musicapp.databinding.HomeFragmentBinding
+import com.example.musicapp.ui.MainActivity
 import com.example.musicapp.ui.base.BaseFragment
 import com.example.musicapp.ui.home.adapters.rv.HomeMusicAdapter
 import com.example.musicapp.ui.home.adapters.vp.ItemSelectedListener
@@ -56,6 +58,10 @@ class HomeFragment() : BaseFragment(), ItemSelectedListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        (activity as MainActivity).requestPermissionIfNeed {
+            if (it) viewModel.subscribeMusicService()
+            else Toast.makeText(requireContext(), getString(R.string.permission_message), Toast.LENGTH_SHORT).show()
+        }
         lightStatusBarController.setIsLightStatusBar(true)
         initTabsAdapter()
 

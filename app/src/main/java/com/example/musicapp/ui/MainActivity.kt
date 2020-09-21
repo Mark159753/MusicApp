@@ -38,13 +38,15 @@ class MainActivity : AppCompatActivity(), LightStatusBarController {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
+    private var permissionListener: ((Boolean) -> Unit)? = null
+
     @Inject
     lateinit var mainFragmentFactory:FragmentFactory
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestPermission()
+        requestPermissionIfNeed()
         binder = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binder.apply {
             lifecycleOwner = this@MainActivity
@@ -153,16 +155,28 @@ class MainActivity : AppCompatActivity(), LightStatusBarController {
     }
 
 
-
-
-    fun requestPermission():Boolean{
-        return if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_CODE)
-            false
-        }else{
-            true
+    fun requestPermissionIfNeed(listener: (Boolean) -> Unit){
+        permissionListener = listener
+        if (isPermissionGranted())
+            listener(true)
+        else {
+            listener(false)
+            requestPermission()
         }
+    }
+
+    private fun requestPermissionIfNeed(){
+        if (!isPermissionGranted())
+            requestPermission()
+    }
+
+    private fun isPermissionGranted():Boolean{
+        return ContextCompat.checkSelfPermission(this,
+            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission(){
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_CODE)
     }
 
     override fun onRequestPermissionsResult(
@@ -174,7 +188,10 @@ class MainActivity : AppCompatActivity(), LightStatusBarController {
             PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    permissionListener?.let { it(true) }
                     Log.d("WE GOT PERMISSION", "READ_EXTERNAL_STORAGE")
+                }else{
+                    permissionListener?.let { it(false) }
                 }
             }
         }

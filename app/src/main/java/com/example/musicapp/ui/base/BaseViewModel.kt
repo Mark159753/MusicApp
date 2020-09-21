@@ -16,7 +16,12 @@ abstract class BaseViewModel() : ViewModel() {
     val listOfSongs: LiveData<List<Song>>
         get() = _listOfSongs
 
-    protected val subscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback(){
+    fun subscribeMusicService(){
+        musicServiceConnection.subscribe(MUSIC_BROWSABLE_ROOT, subscriptionCallback)
+    }
+
+
+    private val subscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback(){
         override fun onChildrenLoaded(
             parentId: String,
             children: MutableList<MediaBrowserCompat.MediaItem>
